@@ -1,10 +1,12 @@
 # epsilon-greedy example implementation of a multi-armed bandit
 import random
 
+
 class Bandit:
     """
     Generic epsilon-greedy bandit that you need to improve
     """
+
     def __init__(self, arms, epsilon=0.1):
         """
         Initiates the bandits
@@ -12,6 +14,7 @@ class Bandit:
         :param arms: List of arms
         :param epsilon: Epsilon value for random exploration
         """
+        self.history_window = 1000
         self.arms = arms
         self.epsilon = epsilon
         self.frequencies = [0] * len(arms)
@@ -42,9 +45,10 @@ class Bandit:
         arm_index = self.arms.index(arm)
         sum = self.sums[arm_index] + reward
         self.sums[arm_index] = sum
-        frequency = self.frequencies[arm_index] + 1
+        frequency = max(self.history_window, self.frequencies[arm_index]) + sum
         self.frequencies[arm_index] = frequency
         expected_value = sum / frequency
         self.expected_values[arm_index] = expected_value
+
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
